@@ -5,17 +5,13 @@ import plane from 'src/images/plane.png';
 import { Text } from 'src/ui/text';
 import styles from './Article.module.scss';
 
-type ArticleProps = {
+/* type ArticleProps = {
 	closeMenu: () => void;
-};
+}; */
 
-export const Article = ({ closeMenu }: ArticleProps) => {
-	function test() {
-		closeMenu();
-	}
-
+export const Article = () => {
 	return (
-		<article className={clsx(styles.article)} onClick={test}>
+		<article className={clsx(styles.article)}>
 			<Text as='h1' size={45} weight={800} uppercase dynamicLite>
 				Портрет Западной Швейцарии
 			</Text>

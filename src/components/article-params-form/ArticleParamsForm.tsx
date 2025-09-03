@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import { Select } from 'src/ui/select';
 import { RadioGroup } from 'src/ui/radio-group';
 import { Separator } from 'src/ui/separator';
+import { useOutsideClickClose } from 'src/ui/select/hooks/useOutsideClickClose';
 import {
 	ArticleStateType,
 	OptionType,
@@ -15,21 +16,27 @@ import {
 	contentWidthArr /*Ширина контента*/,
 	defaultArticleState /*Стартовые значения для стейта*/,
 } from 'src/constants/articleProps';
-import { Dispatch, FormEvent, SetStateAction, useState } from 'react';
+import { Dispatch, FormEvent, SetStateAction, useRef, useState } from 'react';
 
 /*Импорт компонентов для настройки формы*/
 
 type ArticleParamsFormProps = {
 	setGlobalState: Dispatch<SetStateAction<ArticleStateType>>;
-	isOpen: boolean;
-	changeIsOpen: () => void;
 };
 
 export const ArticleParamsForm = ({
 	setGlobalState,
-	isOpen,
-	changeIsOpen,
 }: ArticleParamsFormProps) => {
+	const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+	const rootRef = useRef<HTMLDivElement>(null);
+
+	/*Переиспользование хука для закрытия меню по клику снаружи этого самого меню*/
+	useOutsideClickClose({
+		rootRef: rootRef,
+		isOpen: isMenuOpen,
+		onChange: setIsMenuOpen,
+	});
+
 	/*Установили стейт согласно данным по умолчанию - задачы в переменных*/
 	const [formState, setFormState] =
 		useState<ArticleStateType>(defaultArticleState);
@@ -44,13 +51,15 @@ export const ArticleParamsForm = ({
 		};
 	};
 
-	/*ОТмена перезагрузки формы*/
-	function handelForm(e: FormEvent<HTMLFormElement>) {
-		e.preventDefault();
+	function changeIsOpen() {
+		setIsMenuOpen((prev) => {
+			return !prev;
+		});
 	}
 
 	/*Устанавливаем данные в глобальный стейт, далее идет переопределение всех стилей*/
-	function applySettings() {
+	function applySettings(e: FormEvent<HTMLFormElement>) {
+		e.preventDefault();
 		setGlobalState(formState);
 	}
 
@@ -62,13 +71,18 @@ export const ArticleParamsForm = ({
 
 	return (
 		<>
-			<ArrowButton isOpen={isOpen} onClick={changeIsOpen} />
+			<ArrowButton isOpen={isMenuOpen} onClick={changeIsOpen} />
 			<aside
+				ref={rootRef}
 				className={clsx(
 					`${styles.container}`,
-					`${isOpen && styles.container_open}`
+					`${isMenuOpen && styles.container_open}`
 				)}>
-				<form className={styles.form} onSubmit={handelForm}>
+				<h1 className={styles.title}>Задайте параметры</h1>
+				<form
+					className={styles.form}
+					onSubmit={applySettings}
+					onReset={resetSettings}>
 					{/*Выбор шрифтов из выпадающего списка*/}
 					<Select
 						selected={formState.fontFamilyOption}
@@ -113,18 +127,8 @@ export const ArticleParamsForm = ({
 					/>
 
 					<div className={styles.bottomContainer}>
-						<Button
-							onClick={resetSettings}
-							title='Сбросить'
-							htmlType='reset'
-							type='clear'
-						/>
-						<Button
-							onClick={applySettings}
-							title='Применить'
-							htmlType='submit'
-							type='apply'
-						/>
+						<Button title='Сбросить' htmlType='reset' type='clear' />
+						<Button title='Применить' htmlType='submit' type='apply' />
 					</div>
 				</form>
 			</aside>

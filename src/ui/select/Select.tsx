@@ -49,6 +49,7 @@ export const Select = (props: SelectProps) => {
 
 	return (
 		<div className={styles.container}>
+			{/*Если перед props title, то отрисовывается title*/}
 			{title && (
 				<>
 					<Text size={12} weight={800} uppercase>

@@ -6,16 +6,29 @@
 	overflow: scroll;
 	transform: translate(-616px);
 	transition: transform 0.5s ease;
+
+	/* Мои стили */
 }
 
 .container_open {
 	transform: translate(0);
 }
 
+.title {
+	margin-top: 50px;
+	margin-left: 31px;
+	font-weight: 800;
+	font-size: 31px;
+	letter-spacing: 0%;
+	text-align: left;
+	text-transform: uppercase;
+}
+
 .form {
 	display: flex;
 	flex-shrink: 0;
 	flex-direction: column;
+	row-gap: 50px;
 	box-sizing: border-box;
 	width: 616px;
 	height: auto;
